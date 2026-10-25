@@ -1,0 +1,27 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/reports" class="back">← Reports</a><h1>Indent Status</h1></div>
+</div>
+<table>
+  <thead><tr>
+    <th>Indent</th><th>WOS</th><th>Material</th>
+    <th class="right">Approved</th><th class="right">Issued</th>
+    <th class="right">Pending</th><th>Status</th>
+  </tr></thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td><a href="/production/indent/{{ r.indent_id }}"><strong>{{ r.indent_no }}</strong></a></td>
+      <td>{{ r.wos_no or '—' }}</td>
+      <td><strong>{{ r.material_code }}</strong> — {{ r.material_name }}</td>
+      <td class="right">{{ '{:,.2f}'.format(r.qty_approved or 0) }}</td>
+      <td class="right">{{ '{:,.2f}'.format(r.qty_issued or 0) }}</td>
+      <td class="right">{{ '{:,.2f}'.format(r.qty_pending or 0) }}</td>
+      <td><span class="badge">{{ r.issue_status }}</span></td>
+    </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="7" class="empty">No approved indents yet.</td></tr>{% endif %}
+  </tbody>
+</table>
+{% endblock %}

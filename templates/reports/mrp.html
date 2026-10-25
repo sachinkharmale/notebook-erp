@@ -1,0 +1,45 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/reports" class="back">← Reports</a><h1>MRP — Material Requirements</h1></div>
+</div>
+<p class="muted">Aggregated demand across all open WOS. <strong>{{ '{:,.2f}'.format(total_shortage) }}</strong> total units short.</p>
+<form method="get" class="search-form">
+  <select name="cat"><option value="">All categories</option>
+    <option value="raw_material" {% if cat=='raw_material' %}selected{% endif %}>Raw Material</option>
+    <option value="consumable" {% if cat=='consumable' %}selected{% endif %}>Consumable</option>
+  </select>
+  <select name="action"><option value="">All</option>
+    <option value="procure" {% if action=='procure' %}selected{% endif %}>Shortage only (to procure > 0)</option>
+  </select>
+  <button type="submit">Filter</button>
+  {% if cat or action %}<a href="/reports/mrp">Clear</a>{% endif %}
+</form>
+<table>
+  <thead><tr>
+    <th>Material</th><th class="right">Total Required</th><th class="right">Already Issued</th>
+    <th class="right">Still Needed</th><th class="right">Stock On Hand</th>
+    <th class="right">To Procure</th><th>Need By</th><th>WOS Count</th><th>WOS List</th>
+  </tr></thead>
+  <tbody>
+    {% for r in rows %}
+    <tr {% if (r.qty_to_procure or 0) > 0 %}style="background:#fff7ed"{% endif %}>
+      <td><strong>{{ r.material_code }}</strong><br><span class="muted">{{ r.material_name }}</span></td>
+      <td class="right">{{ '{:,.2f}'.format(r.total_required_qty or 0) }}</td>
+      <td class="right">{{ '{:,.2f}'.format(r.qty_already_issued or 0) }}</td>
+      <td class="right">{{ '{:,.2f}'.format(r.qty_still_needed or 0) }}</td>
+      <td class="right">{{ '{:,.2f}'.format(r.stock_on_hand or 0) }}</td>
+      <td class="right">
+        {% if (r.qty_to_procure or 0) > 0 %}
+        <strong style="color:#dc3545">{{ '{:,.2f}'.format(r.qty_to_procure) }}</strong>
+        {% else %}<span class="muted">—</span>{% endif %}
+      </td>
+      <td>{{ r.earliest_need_by or '—' }}</td>
+      <td class="right">{{ r.wos_count }}</td>
+      <td><span class="muted" style="font-size:11px">{{ r.wos_list or '—' }}</span></td>
+    </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="9" class="empty">No open WOS with matched BOM. Match a BOM first.</td></tr>{% endif %}
+  </tbody>
+</table>
+{% endblock %}

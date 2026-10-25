@@ -1,0 +1,40 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1>Reports &amp; Analytics</h1>
+<div class="grid" style="margin-bottom:24px">
+  <div class="card"><div class="num">{{ counts.wos_open }}</div><div class="label">Open WOS</div></div>
+  <div class="card"><div class="num">₹{{ '{:,.0f}'.format(counts.stock_value) }}</div><div class="label">Stock Value</div></div>
+  <div class="card"><div class="num" style="color:#dc3545">₹{{ '{:,.0f}'.format(counts.ar) }}</div><div class="label">Receivable</div></div>
+  <div class="card"><div class="num" style="color:#f59e0b">₹{{ '{:,.0f}'.format(counts.ap) }}</div><div class="label">Payable</div></div>
+</div>
+<div class="masters-grid">
+  <a href="/reports/wos-tracker" class="master-card">
+    <div class="master-title">WOS Tracker</div>
+    <div class="master-count">All work orders with progress + ship dates</div>
+  </a>
+  <a href="/reports/stock-balance" class="master-card">
+    <div class="master-title">Stock Balance</div>
+    <div class="master-count">Live material balance per warehouse</div>
+  </a>
+  <a href="/reports/mrp" class="master-card">
+    <div class="master-title">MRP — Material Requirements</div>
+    <div class="master-count">Aggregated demand across open WOS</div>
+  </a>
+  <a href="/reports/indent-status" class="master-card">
+    <div class="master-title">Indent Status</div>
+    <div class="master-count">Approved vs Issued per line</div>
+  </a>
+  <a href="/reports/po-tracker" class="master-card">
+    <div class="master-title">PO Tracker</div>
+    <div class="master-count">Supplier POs — ordered vs received</div>
+  </a>
+  <a href="/reports/ar-aging" class="master-card">
+    <div class="master-title">AR Aging</div>
+    <div class="master-count">Customer receivables by bucket</div>
+  </a>
+  <a href="/reports/ap-aging" class="master-card">
+    <div class="master-title">AP Aging</div>
+    <div class="master-count">Supplier payables by bucket</div>
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/reports" class="back">← Reports</a><h1>Stock Balance</h1></div>
+  <div style="text-align:right"><div class="muted">Total Stock Value</div>
+    <div style="font-size:20px;font-weight:600;color:#0d6efd">₹{{ '{:,.0f}'.format(total_value) }}</div></div>
+</div>
+<form method="get" class="search-form">
+  <select name="wh"><option value="">All warehouses</option>
+    {% for w in warehouses %}<option value="{{ w.id }}" {% if wh|string == w.id|string %}selected{% endif %}>{{ w.name }}</option>{% endfor %}
+  </select>
+  <select name="cat"><option value="">All categories</option>
+    <option value="raw_material" {% if cat=='raw_material' %}selected{% endif %}>Raw Material</option>
+    <option value="consumable" {% if cat=='consumable' %}selected{% endif %}>Consumable</option>
+  </select>
+  <button type="submit">Filter</button>
+  {% if wh or cat %}<a href="/reports/stock-balance">Clear</a>{% endif %}
+</form>
+<table>
+  <thead><tr>
+    <th>Material Code</th><th>Name</th><th>Category</th>
+    <th>Warehouse</th><th class="right">Balance</th><th class="right">Value</th>
+  </tr></thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td><strong>{{ r.material_code }}</strong></td>
+      <td>{{ r.material_name }}</td>
+      <td>{{ r.category }}</td>
+      <td>{{ r.warehouse_name }}</td>
+      <td class="right"><strong>{{ '{:,.2f}'.format(r.qty_balance) }}</strong></td>
+      <td class="right">₹{{ '{:,.2f}'.format(r.stock_value or 0) }}</td>
+    </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="6" class="empty">No stock to display. Run some GRNs first.</td></tr>{% endif %}
+  </tbody>
+</table>
+{% endblock %}

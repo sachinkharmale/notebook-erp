@@ -10,6 +10,7 @@ from .routes import router
 from .modules.masters.router import router as masters_router
 from .modules.sales.router import router as sales_router
 from .modules.production.router import router as production_router
+from .modules.reports.router import router as reports_router
 
 SYNC_MAP = {
     "customer_po": "customer_po", "wos": "wos", "bom_template": "bom_template",
@@ -60,3 +61,4 @@ app.include_router(router)
 app.include_router(masters_router)
 app.include_router(sales_router)
 app.include_router(production_router)
+app.include_router(reports_router)

@@ -1,30 +1,23 @@
 ﻿{% extends "base.html" %}
 {% block content %}
 <h1>System Dashboard</h1>
-
 <div class="grid">
   <div class="card"><div class="num">{{ tables|length }}</div><div class="label">Tables</div></div>
   <div class="card"><div class="num">{{ views|length }}</div><div class="label">Views</div></div>
   <div class="card"><div class="num">{{ total_rows }}</div><div class="label">Total Rows</div></div>
   <div class="card"><div class="num">OK</div><div class="label">Status</div></div>
 </div>
-
-<p><a href="/masters" class="btn primary">Manage Masters (10 entities) →</a></p>
-
+<p style="display:flex;gap:8px;flex-wrap:wrap">
+  <a href="/masters" class="btn primary">Masters (10 entities) →</a>
+  <a href="/sales" class="btn primary">Sales →</a>
+  <a href="/production" class="btn primary">Production →</a>
+  <a href="/reports" class="btn primary">Reports →</a>
+</p>
 <h2>Tables &amp; Row Counts</h2>
 <table>
   <thead><tr><th>Table</th><th class="right">Rows</th></tr></thead>
-  <tbody>
-    {% for t in tables %}
-    <tr><td><code>{{ t }}</code></td><td class="right">{{ counts[t] }}</td></tr>
-    {% endfor %}
-  </tbody>
+  <tbody>{% for t in tables %}<tr><td><code>{{ t }}</code></td><td class="right">{{ counts[t] }}</td></tr>{% endfor %}</tbody>
 </table>
-
 <h2>Views</h2>
-<ul>
-  {% for v in views %}
-  <li><code>{{ v }}</code></li>
-  {% endfor %}
-</ul>
+<ul>{% for v in views %}<li><code>{{ v }}</code></li>{% endfor %}</ul>
 {% endblock %}

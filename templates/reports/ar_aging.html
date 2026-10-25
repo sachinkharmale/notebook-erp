@@ -1,0 +1,38 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/reports" class="back">← Reports</a><h1>AR Aging — Receivables</h1></div>
+</div>
+<div class="grid" style="margin-bottom:16px">
+  {% for label, key, color in [('Current','current','#0d6efd'),('0-30 days','0_30','#198754'),('31-60 days','31_60','#ffc107'),('61-90 days','61_90','#fd7e14'),('90+ days','90_plus','#dc3545')] %}
+  <a href="/reports/ar-aging?bucket={{ key }}" class="card" style="text-decoration:none;color:inherit;border-left:4px solid {{ color }}">
+    <div class="label">{{ label }}</div>
+    <div class="num" style="color:{{ color }};font-size:20px">₹{{ '{:,.0f}'.format(totals[key]) }}</div>
+  </a>
+  {% endfor %}
+</div>
+{% if bucket %}<div class="flash success">Filtering: <strong>{{ bucket }}</strong> — <a href="/reports/ar-aging">clear</a></div>{% endif %}
+<table>
+  <thead><tr>
+    <th>Invoice</th><th>Customer</th><th>Invoice Date</th><th>Due Date</th>
+    <th class="right">Total</th><th class="right">Paid</th><th class="right">Balance</th>
+    <th class="right">Days Overdue</th><th>Bucket</th>
+  </tr></thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td><strong>{{ r.invoice_no }}</strong></td>
+      <td>{{ r.customer_name }}</td>
+      <td>{{ r.invoice_date }}</td>
+      <td>{{ r.due_date or '—' }}</td>
+      <td class="right">₹{{ '{:,.2f}'.format(r.total_amount) }}</td>
+      <td class="right">₹{{ '{:,.2f}'.format(r.paid_amount or 0) }}</td>
+      <td class="right"><strong style="color:#dc3545">₹{{ '{:,.2f}'.format(r.balance) }}</strong></td>
+      <td class="right">{{ r.days_overdue }}</td>
+      <td><span class="badge">{{ r.bucket }}</span></td>
+    </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="9" class="empty">No outstanding receivables.</td></tr>{% endif %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,50 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/reports" class="back">← Reports</a><h1>WOS Tracker</h1></div>
+</div>
+
+<div class="grid" style="margin-bottom:16px">
+  {% for s, c in status_counts.items() %}
+  <div class="card"><div class="num" style="font-size:22px">{{ c }}</div><div class="label">{{ s }}</div></div>
+  {% endfor %}
+</div>
+
+<form method="get" class="search-form">
+  <select name="status">
+    <option value="">All statuses</option>
+    {% for s in status_counts.keys() %}<option value="{{ s }}" {% if s==status %}selected{% endif %}>{{ s }}</option>{% endfor %}
+  </select>
+  <input type="search" name="q" value="{{ q }}" placeholder="Search WOS / customer / SKU...">
+  <button type="submit">Filter</button>
+  {% if status or q %}<a href="/reports/wos-tracker">Clear</a>{% endif %}
+</form>
+
+<table>
+  <thead><tr>
+    <th>WOS</th><th>Customer</th><th>SKU</th>
+    <th class="right">Order</th><th class="right">Produced</th>
+    <th class="right">Packed</th><th class="right">Dispatched</th>
+    <th class="right">Balance</th>
+    <th>Ship Date</th><th>Status</th><th></th>
+  </tr></thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td><strong>{{ r.wos_no }}</strong></td>
+      <td>{{ r.customer_name }}</td>
+      <td>{{ r.sku_code }}</td>
+      <td class="right">{{ '{:,.0f}'.format(r.order_qty) }}</td>
+      <td class="right">{{ '{:,.0f}'.format(r.qty_produced) }}</td>
+      <td class="right">{{ '{:,.0f}'.format(r.qty_packed) }}</td>
+      <td class="right">{{ '{:,.0f}'.format(r.qty_dispatched) }}</td>
+      <td class="right"><strong>{{ '{:,.0f}'.format(r.qty_balance) }}</strong></td>
+      <td>{{ r.ship_date or '—' }}</td>
+      <td><span class="badge">{{ r.wos_status }}</span></td>
+      <td><a href="/sales/wos/{{ r.wos_id }}">View →</a></td>
+    </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="11" class="empty">No WOS match the filter.</td></tr>{% endif %}
+  </tbody>
+</table>
+{% endblock %}

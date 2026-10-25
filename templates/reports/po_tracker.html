@@ -1,0 +1,27 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/reports" class="back">← Reports</a><h1>PO Tracker</h1></div>
+</div>
+<table>
+  <thead><tr>
+    <th>PO No</th><th>Supplier</th><th>Material</th>
+    <th class="right">Ordered</th><th class="right">Received</th>
+    <th class="right">Balance</th><th>Status</th>
+  </tr></thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td><strong>{{ r.po_no }}</strong></td>
+      <td>{{ r.supplier_name }}</td>
+      <td><strong>{{ r.material_code }}</strong> — {{ r.material_name }}</td>
+      <td class="right">{{ '{:,.2f}'.format(r.order_qty or 0) }}</td>
+      <td class="right">{{ '{:,.2f}'.format(r.qty_received or 0) }}</td>
+      <td class="right"><strong>{{ '{:,.2f}'.format(r.qty_balance or 0) }}</strong></td>
+      <td><span class="badge">{{ r.po_status }}</span></td>
+    </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="7" class="empty">No supplier POs yet.</td></tr>{% endif %}
+  </tbody>
+</table>
+{% endblock %}
