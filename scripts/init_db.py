@@ -14,9 +14,18 @@ FILES = [
     "01-masters.sql",
     "02-sales.sql",
     "03-engineering.sql",
+    "04-procurement.sql",
+    "05-inventory.sql",
+    "06-triggers.sql",
+    "07-production.sql",
+    "08-quality.sql",
+    "09-production-views.sql",
+    "10-production-triggers.sql",
     "seed-masters.sql",
     "seed-sales.sql",
     "seed-engineering.sql",
+    "seed-procurement.sql",
+    "seed-production.sql",
 ]
 
 def run_sql_file(conn, path):
@@ -37,7 +46,14 @@ def verify(conn):
     views = conn.execute(
         "SELECT name FROM sqlite_master WHERE type='view' ORDER BY name"
     ).fetchall()
-    print(f"  Views ({len(views)}): {[v for (v,) in views] or 'none yet'}")
+    print(f"  Views ({len(views)}): {[v for (v,) in views] or 'none'}")
+
+    triggers = conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='trigger' ORDER BY name"
+    ).fetchall()
+    print(f"  Triggers ({len(triggers)}):")
+    for (t,) in triggers:
+        print(f"    - {t}")
 
 def main():
     if DB_PATH.exists():
