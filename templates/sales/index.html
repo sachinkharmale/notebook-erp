@@ -1,0 +1,14 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1>Sales</h1>
+<div class="masters-grid">
+  <a href="/sales/customer-po" class="master-card">
+    <div class="master-title">Customer POs</div>
+    <div class="master-count">{{ po_count }} order(s)</div>
+  </a>
+  <a href="/sales/wos" class="master-card">
+    <div class="master-title">WOS (Work Orders)</div>
+    <div class="master-count">{{ wos_count }} work order(s)</div>
+  </a>
+</div>
+{% endblock %}

@@ -1,8 +1,7 @@
 ﻿<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>{{ app_name or "Mini ERP" }}</title>
+  <meta charset="utf-8"><title>{{ app_name or "Mini ERP" }}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/static/css/app.css">
 </head>
@@ -12,19 +11,13 @@
     <nav>
       <a href="/">Dashboard</a>
       <a href="/masters">Masters</a>
+      <a href="/sales">Sales</a>
       <a href="/docs">API</a>
-      <a href="/health">Health</a>
-      {% if user %}
-      <span class="user-badge">{{ user }}</span>
-      <a href="/logout" class="logout">Logout</a>
-      {% else %}
-      <a href="/login" class="login">Login</a>
-      {% endif %}
+      {% if user %}<span class="user-badge">{{ user }}</span><a href="/logout" class="logout">Logout</a>
+      {% else %}<a href="/login" class="login">Login</a>{% endif %}
     </nav>
   </header>
-  <main>
-    {% block content %}{% endblock %}
-  </main>
+  <main>{% block content %}{% endblock %}</main>
   <footer><span>{{ app_env or "dev" }}</span></footer>
 </body>
 </html>

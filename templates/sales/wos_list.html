@@ -1,0 +1,30 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/sales" class="back">← Sales</a><h1>WOS — Work Order Sheets</h1></div>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+<table>
+  <thead><tr>
+    <th>WOS No</th><th>Customer</th><th>SKU</th>
+    <th>Order</th><th>Produced</th><th>Packed</th><th>Dispatched</th>
+    <th>Status</th><th></th>
+  </tr></thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td><strong>{{ r.wos_no }}</strong></td>
+      <td>{{ r.customer_name }}</td>
+      <td>{{ r.sku_code }}</td>
+      <td>{{ '{:,.0f}'.format(r.order_qty) }}</td>
+      <td>{{ '{:,.0f}'.format(r.qty_produced) }}</td>
+      <td>{{ '{:,.0f}'.format(r.qty_packed) }}</td>
+      <td>{{ '{:,.0f}'.format(r.qty_dispatched) }}</td>
+      <td><span class="badge">{{ r.wos_status }}</span></td>
+      <td><a href="/sales/wos/{{ r.id }}">View →</a></td>
+    </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="9" class="empty">No WOS yet.</td></tr>{% endif %}
+  </tbody>
+</table>
+{% endblock %}

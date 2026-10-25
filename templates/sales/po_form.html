@@ -1,0 +1,62 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/sales/customer-po" class="back">← Customer POs</a><h1>New Customer PO</h1></div>
+</div>
+{% if error %}<div class="flash error">{{ error }}</div>{% endif %}
+<form method="post" action="/sales/customer-po/new" class="entity-form">
+  <div class="field-row">
+    <div class="field"><label>PO No <span class="req">*</span></label>
+      <input type="text" name="po_no" value="{{ row.po_no if row else po_no }}" required></div>
+    <div class="field"><label>Customer <span class="req">*</span></label>
+      <select name="customer_id" required><option value="">—</option>
+        {% for c in customers %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+      </select></div>
+    <div class="field"><label>PO Date <span class="req">*</span></label>
+      <input type="date" name="po_date" value="{{ row.po_date if row else '' }}" required></div>
+    <div class="field"><label>Status</label>
+      <select name="status">
+        <option value="draft">Draft</option>
+        <option value="confirmed" selected>Confirmed</option>
+      </select></div>
+  </div>
+
+  <h3>Line Items</h3>
+  <table id="lines-table">
+    <thead><tr>
+      <th>SKU</th><th>Qty</th><th>Rate</th><th>Delivery Date</th><th></th>
+    </tr></thead>
+    <tbody id="lines-body">
+      {% for line in lines %}
+      <tr class="line-row">
+        <td><select name="sku_id"><option value="">—</option>
+          {% for s in skus %}<option value="{{ s.id }}">{{ s.code }} — {{ s.name }}</option>{% endfor %}
+        </select></td>
+        <td><input type="number" name="qty" step="any" value="1000" required></td>
+        <td><input type="number" name="rate" step="any" value="0"></td>
+        <td><input type="date" name="delivery_date"></td>
+        <td><button type="button" class="link danger" onclick="this.closest('tr').remove()">×</button></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <button type="button" class="btn" onclick="addLine()">+ Add Line</button>
+  <div class="form-actions">
+    <button type="submit" class="btn primary">Create PO</button>
+    <a href="/sales/customer-po" class="btn">Cancel</a>
+  </div>
+</form>
+<script>
+const skuOptions = `{% for s in skus %}<option value="{{ s.id }}">{{ s.code }} — {{ s.name }}</option>{% endfor %}`;
+function addLine() {
+  const tr = document.createElement('tr');
+  tr.className = 'line-row';
+  tr.innerHTML = '<td><select name="sku_id"><option value="">—</option>' + skuOptions + '</select></td>'
+    + '<td><input type="number" name="qty" step="any" value="1000" required></td>'
+    + '<td><input type="number" name="rate" step="any" value="0"></td>'
+    + '<td><input type="date" name="delivery_date"></td>'
+    + '<td><button type="button" class="link danger" onclick="this.closest(\'tr\').remove()">×</button></td>';
+  document.getElementById('lines-body').appendChild(tr);
+}
+</script>
+{% endblock %}

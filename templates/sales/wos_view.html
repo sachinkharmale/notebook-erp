@@ -1,0 +1,79 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/sales/wos" class="back">← All WOS</a><h1>{{ wos.wos_no }}</h1></div>
+  <span class="badge big">{{ wos.wos_status }}</span>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+
+<dl class="view-dl">
+  <dt>Customer</dt><dd>{{ wos.customer_name }}</dd>
+  <dt>SKU</dt><dd><strong>{{ wos.sku_code }}</strong> — {{ wos.sku_name }}</dd>
+  <dt>From PO</dt><dd>{{ po_info.po_no }} (line {{ po_info.line_no }})</dd>
+  <dt>Order Qty</dt><dd>{{ '{:,.0f}'.format(wos.order_qty) }} units</dd>
+  <dt>Ship Date</dt><dd>{{ wos.ship_date or '—' }}</dd>
+  <dt>Locked</dt><dd>{{ 'YES' if wos.locked else 'No' }}</dd>
+</dl>
+
+<h2>Progress</h2>
+<div class="grid">
+  <div class="card"><div class="num">{{ '{:,.0f}'.format(rollup.qty_produced) }}</div><div class="label">Produced</div></div>
+  <div class="card"><div class="num">{{ '{:,.0f}'.format(rollup.qty_packed) }}</div><div class="label">Packed</div></div>
+  <div class="card"><div class="num">{{ '{:,.0f}'.format(rollup.qty_dispatched) }}</div><div class="label">Dispatched</div></div>
+  <div class="card"><div class="num">{{ '{:,.0f}'.format(rollup.qty_balance) }}</div><div class="label">Balance</div></div>
+</div>
+
+<h2>BOM</h2>
+{% if bom %}
+<div class="flash success">Matched to <strong>{{ bom.bom_id }}</strong></div>
+<table>
+  <thead><tr><th>Material</th><th>Required Qty</th></tr></thead>
+  <tbody>
+    {% for b in bom_lines %}
+    <tr><td><strong>{{ b.mcode }}</strong> — {{ b.mname }}</td><td>{{ '{:,.2f}'.format(b.required_qty) }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+{% if matching_boms %}
+<div class="flash success">{{ matching_boms|length }} matching BOM template(s) found</div>
+<form method="post" action="/sales/wos/{{ wos.id }}/match-bom" class="entity-form">
+  <div class="field">
+    <label>Select BOM Template</label>
+    <select name="bom_template_id" required>
+      {% for b in matching_boms %}
+      <option value="{{ b.id }}">{{ b.bom_id }} — {{ b.bom_group_id }} ({{ b.size }} / {{ b.pages }}p)</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button type="submit" class="btn primary">Match BOM → Explode to WOS</button>
+</form>
+{% else %}
+<div class="flash error">No matching BOM template for this SKU specs.</div>
+{% endif %}
+{% endif %}
+
+<h2>Indents ({{ indents|length }})</h2>
+{% if indents %}
+<table><thead><tr><th>No</th><th>Date</th><th>Status</th></tr></thead>
+<tbody>{% for i in indents %}<tr><td>{{ i.indent_no }}</td><td>{{ i.indent_date }}</td><td>{{ i.approval_status }}</td></tr>{% endfor %}</tbody></table>
+{% else %}<p class="muted">No indents yet.</p>{% endif %}
+
+<h2>Production ({{ prod|length }})</h2>
+{% if prod %}
+<table><thead><tr><th>No</th><th>Date</th><th>Qty</th><th>Machine</th></tr></thead>
+<tbody>{% for p in prod %}<tr><td>{{ p.production_no }}</td><td>{{ p.production_date }}</td><td>{{ '{:,.0f}'.format(p.qty_produced) }}</td><td>{{ p.machine_name or '—' }}</td></tr>{% endfor %}</tbody></table>
+{% else %}<p class="muted">No production entries yet.</p>{% endif %}
+
+<h2>Packing ({{ pack|length }})</h2>
+{% if pack %}
+<table><thead><tr><th>No</th><th>Date</th><th>Qty</th><th>Cases</th></tr></thead>
+<tbody>{% for p in pack %}<tr><td>{{ p.packing_no }}</td><td>{{ p.packing_date }}</td><td>{{ '{:,.0f}'.format(p.qty_packed) }}</td><td>{{ p.master_cases or '—' }}</td></tr>{% endfor %}</tbody></table>
+{% else %}<p class="muted">No packing entries yet.</p>{% endif %}
+
+<h2>Dispatch ({{ disp|length }})</h2>
+{% if disp %}
+<table><thead><tr><th>No</th><th>Date</th><th>Qty</th><th>Vehicle</th><th>Status</th></tr></thead>
+<tbody>{% for d in disp %}<tr><td>{{ d.dispatch_no }}</td><td>{{ d.dispatch_date }}</td><td>{{ '{:,.0f}'.format(d.qty_dispatched) }}</td><td>{{ d.vehicle_no or '—' }}</td><td>{{ d.dispatch_status }}</td></tr>{% endfor %}</tbody></table>
+{% else %}<p class="muted">No dispatch entries yet.</p>{% endif %}
+{% endblock %}

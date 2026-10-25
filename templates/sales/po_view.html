@@ -1,0 +1,37 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/sales/customer-po" class="back">← Customer POs</a><h1>{{ po.po_no }}</h1></div>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+<dl class="view-dl">
+  <dt>Customer</dt><dd>{{ po.customer_name }}</dd>
+  <dt>PO Date</dt><dd>{{ po.po_date }}</dd>
+  <dt>Status</dt><dd>{{ po.status }}</dd>
+</dl>
+<h2>Line Items</h2>
+<table>
+  <thead><tr>
+    <th>#</th><th>SKU</th><th>Qty</th><th>Rate</th><th>Delivery</th><th>WOS</th><th>Action</th>
+  </tr></thead>
+  <tbody>
+    {% for l in lines %}
+    <tr>
+      <td>{{ l.line_no }}</td>
+      <td><strong>{{ l.sku_code }}</strong> {{ l.sku_name }}</td>
+      <td>{{ '{:,.0f}'.format(l.qty) }}</td>
+      <td>{{ '{:,.2f}'.format(l.rate) if l.rate else '—' }}</td>
+      <td>{{ l.delivery_date or '—' }}</td>
+      <td>{% if l.wos_no %}<a href="/sales/wos/{{ l.wos_id }}"><strong>{{ l.wos_no }}</strong></a>{% else %}<span class="muted">—</span>{% endif %}</td>
+      <td>
+        {% if not l.wos_no %}
+        <form method="post" action="/sales/customer-po/line/{{ l.id }}/create-wos" style="display:inline">
+          <button type="submit" class="btn primary" style="padding:4px 12px;font-size:12px">Create WOS</button>
+        </form>
+        {% else %}<a href="/sales/wos/{{ l.wos_id }}">View WOS →</a>{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

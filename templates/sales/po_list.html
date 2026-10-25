@@ -1,0 +1,29 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/sales" class="back">← Sales</a><h1>Customer POs</h1></div>
+  <a href="/sales/customer-po/new" class="btn primary">+ New PO</a>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+<table>
+  <thead><tr>
+    <th>#</th><th>PO No</th><th>Customer</th><th>PO Date</th>
+    <th>Lines</th><th>Total Qty</th><th>Status</th><th></th>
+  </tr></thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r.id }}</td>
+      <td><strong>{{ r.po_no }}</strong></td>
+      <td>{{ r.customer_name }}</td>
+      <td>{{ r.po_date }}</td>
+      <td>{{ r.line_count }}</td>
+      <td>{{ '{:,.0f}'.format(r.total_qty) }}</td>
+      <td><span class="badge">{{ r.status }}</span></td>
+      <td><a href="/sales/customer-po/{{ r.id }}">View →</a></td>
+    </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="8" class="empty">No POs yet. <a href="/sales/customer-po/new">Create one →</a></td></tr>{% endif %}
+  </tbody>
+</table>
+{% endblock %}
