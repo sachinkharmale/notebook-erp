@@ -1,6 +1,6 @@
 ﻿"""
-Initialize the SQLite database with schema + seed data.
-Safe to re-run. Uses utf-8-sig to strip Windows BOM.
+Initialize the SQLite database with the complete schema + seed data.
+22 SQL files, safe to re-run. Uses utf-8-sig to strip Windows BOM.
 """
 import sqlite3
 import sys
@@ -11,6 +11,7 @@ DB_PATH = ROOT / "mini_erp.db"
 SQL_DIR = ROOT / "sql"
 
 FILES = [
+    # Schema — run in dependency order
     "01-masters.sql",
     "02-sales.sql",
     "03-engineering.sql",
@@ -21,11 +22,19 @@ FILES = [
     "08-quality.sql",
     "09-production-views.sql",
     "10-production-triggers.sql",
+    "11-gate.sql",
+    "12-finance.sql",
+    "13-crosscutting.sql",
+    "14-finance-views.sql",
+    # Seed — masters first, then transactions
     "seed-masters.sql",
     "seed-sales.sql",
     "seed-engineering.sql",
     "seed-procurement.sql",
     "seed-production.sql",
+    "seed-gate.sql",
+    "seed-finance.sql",
+    "seed-crosscutting.sql",
 ]
 
 def run_sql_file(conn, path):
@@ -46,7 +55,9 @@ def verify(conn):
     views = conn.execute(
         "SELECT name FROM sqlite_master WHERE type='view' ORDER BY name"
     ).fetchall()
-    print(f"  Views ({len(views)}): {[v for (v,) in views] or 'none'}")
+    print(f"  Views ({len(views)}):")
+    for (v,) in views:
+        print(f"    - {v}")
 
     triggers = conn.execute(
         "SELECT name FROM sqlite_master WHERE type='trigger' ORDER BY name"
