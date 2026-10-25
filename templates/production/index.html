@@ -1,0 +1,26 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1>Production</h1>
+<div class="masters-grid">
+  <a href="/production/indent" class="master-card">
+    <div class="master-title">Indents (Material Requests)</div>
+    <div class="master-count">{{ counts.indent }} indent(s)</div>
+  </a>
+  <a href="/production/issue" class="master-card">
+    <div class="master-title">Material Issue</div>
+    <div class="master-count">{{ counts.issue }} issue(s)</div>
+  </a>
+  <a href="/production/entry?process=production" class="master-card">
+    <div class="master-title">Production Entry</div>
+    <div class="master-count">{{ counts.prod }} entries</div>
+  </a>
+  <a href="/production/entry?process=packing" class="master-card">
+    <div class="master-title">Packing Entry</div>
+    <div class="master-count">{{ counts.pack }} entries</div>
+  </a>
+  <a href="/production/entry?process=dispatch" class="master-card">
+    <div class="master-title">Dispatch Entry</div>
+    <div class="master-count">{{ counts.disp }} entries</div>
+  </a>
+</div>
+{% endblock %}

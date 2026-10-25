@@ -9,6 +9,7 @@ from .auth import hash_password
 from .routes import router
 from .modules.masters.router import router as masters_router
 from .modules.sales.router import router as sales_router
+from .modules.production.router import router as production_router
 
 SYNC_MAP = {
     "customer_po": "customer_po", "wos": "wos", "bom_template": "bom_template",
@@ -27,32 +28,25 @@ async def lifespan(app: FastAPI):
         raise RuntimeError(f"DB not found at {DB_PATH}. Run scripts/init_db.py")
     today = str(date.today())
     with get_conn() as conn:
-        row = conn.execute(
-            "SELECT id, password_hash FROM app_user WHERE username='admin'"
-        ).fetchone()
+        row = conn.execute("SELECT id, password_hash FROM app_user WHERE username='admin'").fetchone()
         if row and row["password_hash"] == "CHANGE_ME_ON_FIRST_RUN":
             conn.execute("UPDATE app_user SET password_hash=? WHERE id=?",
                          (hash_password("admin123"), row["id"]))
             conn.commit()
             print("Admin password set to 'admin123'")
-
-        # Self-heal naming series from existing records
         for entity, table in SYNC_MAP.items():
             try:
                 max_count = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
-                ns = conn.execute(
-                    "SELECT next_no, last_reset FROM naming_series WHERE entity=?",
-                    (entity,)).fetchone()
+                ns = conn.execute("SELECT next_no, last_reset FROM naming_series WHERE entity=?",
+                                  (entity,)).fetchone()
                 if ns:
                     target = max_count + 1
                     if ns["next_no"] < target or not ns["last_reset"]:
-                        conn.execute(
-                            "UPDATE naming_series SET next_no=?, last_reset=? WHERE entity=?",
-                            (target, today, entity))
+                        conn.execute("UPDATE naming_series SET next_no=?, last_reset=? WHERE entity=?",
+                                     (target, today, entity))
             except Exception:
                 pass
         conn.commit()
-
     print(f"{APP_NAME} - {len(list_tables())} tables, {len(list_views())} views")
     yield
 
@@ -65,3 +59,4 @@ if STATIC_DIR.exists():
 app.include_router(router)
 app.include_router(masters_router)
 app.include_router(sales_router)
+app.include_router(production_router)

@@ -1,0 +1,21 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/production" class="back">← Production</a><h1>Process Entries</h1></div>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+<div class="masters-grid">
+  <a href="/production/entry/new?process=production" class="master-card">
+    <div class="master-title">Production Entry</div>
+    <div class="master-count">Record output qty, machine, wastage</div>
+  </a>
+  <a href="/production/entry/new?process=packing" class="master-card">
+    <div class="master-title">Packing Entry</div>
+    <div class="master-count">Pack finished goods into cases</div>
+  </a>
+  <a href="/production/entry/new?process=dispatch" class="master-card">
+    <div class="master-title">Dispatch Entry</div>
+    <div class="master-count">Ship to customer (partial allowed)</div>
+  </a>
+</div>
+{% endblock %}

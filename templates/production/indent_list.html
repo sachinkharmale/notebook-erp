@@ -1,0 +1,28 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/production" class="back">← Production</a><h1>Indents</h1></div>
+  <a href="/production/indent/new" class="btn primary">+ New Indent</a>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+<table>
+  <thead><tr>
+    <th>Indent No</th><th>WOS</th><th>Date</th>
+    <th>Requestor</th><th>Lines</th><th>Status</th><th></th>
+  </tr></thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td><strong>{{ r.indent_no }}</strong></td>
+      <td>{{ r.wos_no }}</td>
+      <td>{{ r.indent_date }}</td>
+      <td>{{ r.requestor_name }}</td>
+      <td>{{ r.line_count }}</td>
+      <td><span class="badge">{{ r.approval_status }}</span></td>
+      <td><a href="/production/indent/{{ r.id }}">View →</a></td>
+    </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="7" class="empty">No indents. <a href="/production/indent/new">Create one →</a></td></tr>{% endif %}
+  </tbody>
+</table>
+{% endblock %}

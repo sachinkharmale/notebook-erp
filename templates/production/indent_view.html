@@ -1,0 +1,36 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/production/indent" class="back">← Indents</a><h1>{{ indent.indent_no }}</h1></div>
+  <span class="badge big">{{ indent.approval_status }}</span>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+<dl class="view-dl">
+  <dt>WOS</dt><dd><a href="/sales/wos/{{ indent.wos_id }}">{{ indent.wos_no }}</a></dd>
+  <dt>Requestor</dt><dd>{{ indent.requestor_name }}</dd>
+  <dt>Date</dt><dd>{{ indent.indent_date }}</dd>
+</dl>
+<h2>Lines</h2>
+<table>
+  <thead><tr><th>Material</th><th>Requested</th><th>Approved</th><th>Issued</th><th>Pending</th></tr></thead>
+  <tbody>
+    {% for l in lines %}
+    {% set pending = (l.qty_approved or 0) - l.qty_issued %}
+    <tr>
+      <td><strong>{{ l.mcode }}</strong> — {{ l.mname }}</td>
+      <td>{{ '{:,.2f}'.format(l.qty_requested) }}</td>
+      <td>{{ '{:,.2f}'.format(l.qty_approved) if l.qty_approved else '—' }}</td>
+      <td>{{ '{:,.2f}'.format(l.qty_issued) }}</td>
+      <td><strong>{{ '{:,.2f}'.format(pending) if pending > 0 else '✓ Done' }}</strong></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if indent.docstatus == 0 and indent.approval_status == 'pending' %}
+<form method="post" action="/production/indent/{{ indent.id }}/approve" style="margin-top:16px">
+  <button type="submit" class="btn primary">Approve Indent</button>
+</form>
+{% elif indent.docstatus == 1 %}
+<p style="margin-top:16px"><a href="/production/issue/new?indent={{ indent.id }}" class="btn primary">Create Material Issue →</a></p>
+{% endif %}
+{% endblock %}

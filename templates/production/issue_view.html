@@ -1,0 +1,28 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/production/issue" class="back">← Issues</a><h1>{{ issue.issue_no }}</h1></div>
+  <span class="badge big">{{ 'Submitted' if issue.docstatus == 1 else 'Draft' }}</span>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+<dl class="view-dl">
+  <dt>Indent</dt><dd><a href="/production/indent/{{ issue.indent_id }}">{{ issue.indent_no }}</a></dd>
+  <dt>WOS</dt><dd>{% if issue.wos_id %}<a href="/sales/wos/{{ issue.wos_id }}">{{ issue.wos_no }}</a>{% else %}—{% endif %}</dd>
+  <dt>Issue Date</dt><dd>{{ issue.issue_date }}</dd>
+  <dt>Issued To</dt><dd>{{ issue.issued_to }}</dd>
+</dl>
+<h2>Lines</h2>
+<table>
+  <thead><tr><th>Material</th><th>Qty Issued</th></tr></thead>
+  <tbody>
+    {% for l in lines %}<tr><td><strong>{{ l.mcode }}</strong> — {{ l.mname }}</td><td>{{ '{:,.2f}'.format(l.qty_issued) }}</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% if issue.docstatus == 0 %}
+<form method="post" action="/production/issue/{{ issue.id }}/submit" style="margin-top:16px">
+  <button type="submit" class="btn primary" onclick="return confirm('Submit? This will deduct stock permanently.')">Submit Issue (post to stock)</button>
+</form>
+{% else %}
+<div class="flash success" style="margin-top:16px">✓ Stock deducted at {{ issue.issue_date }}</div>
+{% endif %}
+{% endblock %}

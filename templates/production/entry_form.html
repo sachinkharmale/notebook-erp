@@ -1,0 +1,67 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/production/entry" class="back">← Process Entries</a>
+    <h1>{{ process|title }} Entry</h1></div>
+</div>
+{% if msg %}<div class="flash error">{{ msg }}</div>{% endif %}
+<form method="post" action="/production/entry/new" class="entity-form">
+  <input type="hidden" name="process" value="{{ process }}">
+  <div class="field-row">
+    <div class="field"><label>Entry No</label>
+      <input type="text" name="entry_no" value="{{ no }}" required></div>
+    <div class="field"><label>WOS <span class="req">*</span></label>
+      <select name="wos_id" required>
+        <option value="">— Select WOS —</option>
+        {% for w in wos_list %}<option value="{{ w.id }}" {% if w.id==selected_wos %}selected{% endif %}>{{ w.wos_no }} ({{ w.order_qty }} units)</option>{% endfor %}
+      </select></div>
+    <div class="field"><label>Date</label>
+      <input type="date" name="entry_date" value="{{ today }}"></div>
+  </div>
+
+  {% if process == 'production' %}
+  <div class="field-row">
+    <div class="field"><label>Qty Produced <span class="req">*</span></label>
+      <input type="number" name="qty" step="any" required></div>
+    <div class="field"><label>Wastage Qty</label>
+      <input type="number" name="wastage" step="any" value="0"></div>
+    <div class="field"><label>Machine</label>
+      <input type="text" name="machine_name" value="Press-01"></div>
+    <div class="field"><label>Producer</label>
+      <input type="text" name="producer" value="Operator"></div>
+  </div>
+  <p class="muted">Rule R4: WOS must have a <strong>submitted</strong> Material Issue first.</p>
+  {% elif process == 'packing' %}
+  <div class="field-row">
+    <div class="field"><label>Qty Packed <span class="req">*</span></label>
+      <input type="number" name="qty" step="any" required></div>
+    <div class="field"><label>Master Cases</label>
+      <input type="number" name="master_cases"></div>
+    <div class="field"><label>Packed By</label>
+      <input type="text" name="producer" value="Packing Team"></div>
+  </div>
+  <p class="muted">Rule R3: Packed qty must not exceed <strong>Produced qty</strong> for the WOS.</p>
+  {% else %}
+  <div class="field-row">
+    <div class="field"><label>Qty Dispatched <span class="req">*</span></label>
+      <input type="number" name="qty" step="any" required></div>
+    <div class="field"><label>Master Cases</label>
+      <input type="number" name="master_cases"></div>
+    <div class="field"><label>Vehicle No</label>
+      <input type="text" name="vehicle_no"></div>
+    <div class="field"><label>Transporter</label>
+      <input type="text" name="transporter_name"></div>
+    <div class="field"><label>LR No</label>
+      <input type="text" name="lr_no"></div>
+    <div class="field"><label>Driver Name</label>
+      <input type="text" name="driver_name"></div>
+  </div>
+  <p class="muted">Rule R2: Dispatched qty must not exceed <strong>Packed qty</strong> for the WOS.</p>
+  {% endif %}
+
+  <div class="form-actions">
+    <button type="submit" class="btn primary">Create & Submit</button>
+    <a href="/production/entry" class="btn">Cancel</a>
+  </div>
+</form>
+{% endblock %}

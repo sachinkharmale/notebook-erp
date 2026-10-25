@@ -1,0 +1,60 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/production/indent" class="back">← Indents</a><h1>New Indent</h1></div>
+</div>
+<form method="post" action="/production/indent/new" class="entity-form">
+  <div class="field-row">
+    <div class="field"><label>Indent No</label>
+      <input type="text" name="indent_no" value="{{ indent_no }}" required></div>
+    <div class="field"><label>WOS <span class="req">*</span></label>
+      <select name="wos_id" required onchange="if(this.value) location.href='/production/indent/new?wos='+this.value">
+        <option value="">— Select WOS —</option>
+        {% for w in wos_list %}<option value="{{ w.id }}" {% if w.id==selected_wos %}selected{% endif %}>{{ w.wos_no }} ({{ w.order_qty }} units)</option>{% endfor %}
+      </select></div>
+    <div class="field"><label>Department</label>
+      <select name="department_id"><option value="">—</option>
+        {% for d in departments %}<option value="{{ d.id }}">{{ d.name }}</option>{% endfor %}
+      </select></div>
+    <div class="field"><label>Requestor</label>
+      <input type="text" name="requestor_name" value="Production Supervisor"></div>
+    <div class="field"><label>Date</label>
+      <input type="date" name="indent_date" value="{{ today }}"></div>
+  </div>
+
+  <h3>Materials to Request</h3>
+  {% if bom_lines %}
+  <div class="flash success">{{ bom_lines|length }} material(s) from BOM</div>
+  {% endif %}
+  <table>
+    <thead><tr>
+      <th>Material</th><th>Qty</th><th>Warehouse</th><th>UOM</th><th>Action</th>
+    </tr></thead>
+    <tbody id="lines-body">
+      {% if bom_lines %}
+      {% for b in bom_lines %}
+      <tr>
+        <td><input type="hidden" name="material_id" value="{{ b.material_id }}"><strong>{{ b.mcode }}</strong> — {{ b.mname }}</td>
+        <td><input type="number" name="qty" step="any" value="{{ '%.2f' % b.required_qty }}"></td>
+        <td><input type="number" name="warehouse_id" value="1" style="width:60px"></td>
+        <td><input type="hidden" name="uom_id" value="{{ b.uom_id }}">{{ b.uom_id }}</td>
+        <td><button type="button" class="link danger" onclick="this.closest('tr').remove()">×</button></td>
+      </tr>
+      {% endfor %}
+      {% else %}
+      <tr>
+        <td><input type="hidden" name="material_id" value="1">Paper (default)</td>
+        <td><input type="number" name="qty" value="1000"></td>
+        <td><input type="number" name="warehouse_id" value="1" style="width:60px"></td>
+        <td><input type="hidden" name="uom_id" value="1">KG</td>
+        <td><button type="button" class="link danger" onclick="this.closest('tr').remove()">×</button></td>
+      </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  <div class="form-actions">
+    <button type="submit" class="btn primary">Create Indent (draft)</button>
+    <a href="/production/indent" class="btn">Cancel</a>
+  </div>
+</form>
+{% endblock %}
