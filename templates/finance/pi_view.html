@@ -1,0 +1,22 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/finance/purchase-invoice" class="back">← Purchase Invoices</a><h1>{{ pi.invoice_no }}</h1></div>
+  <span class="badge big">{{ pi.computed_status }}</span>
+</div>
+<dl class="view-dl">
+  <dt>Supplier</dt><dd>{{ pi.supplier_name }}</dd>
+  <dt>Supplier Invoice</dt><dd>{{ pi.supplier_invoice_no or '—' }}</dd>
+  <dt>Invoice Date</dt><dd>{{ pi.invoice_date }}</dd>
+  <dt>Total</dt><dd><strong>₹{{ '{:,.2f}'.format(pi.total_amount) }}</strong></dd>
+  <dt>Paid</dt><dd>₹{{ '{:,.2f}'.format(pi.paid_amount or 0) }}</dd>
+  <dt>Balance</dt><dd><strong style="color:#f59e0b">₹{{ '{:,.2f}'.format(pi.balance) }}</strong></dd>
+</dl>
+<h2>Lines</h2>
+<table>
+  <thead><tr><th>Material</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead>
+  <tbody>
+    {% for l in lines %}<tr><td><strong>{{ l.material_code }}</strong> {{ l.material_name }}</td><td>{{ '{:,.2f}'.format(l.qty) }}</td><td>₹{{ '{:,.2f}'.format(l.rate) }}</td><td>₹{{ '{:,.2f}'.format(l.amount) }}</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

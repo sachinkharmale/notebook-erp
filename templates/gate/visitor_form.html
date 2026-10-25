@@ -1,0 +1,34 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/gate/visitor" class="back">← Visitor Visits</a><h1>New Visitor Entry</h1></div>
+</div>
+<form method="post" action="/gate/visitor/new" class="entity-form">
+  <div class="field-row">
+    <div class="field"><label>Visit No</label><input type="text" name="visit_no" value="{{ no }}" required></div>
+    <div class="field"><label>In Time</label><input type="datetime-local" name="in_time" value="{{ now }}" required></div>
+    <div class="field"><label>Visitor Name</label><input type="text" name="visitor_name" required></div>
+    <div class="field"><label>Company</label><input type="text" name="company_name"></div>
+    <div class="field"><label>Coming From</label><input type="text" name="coming_from"></div>
+    <div class="field"><label>Mobile</label><input type="text" name="mobile"></div>
+    <div class="field"><label>Whom to Meet</label><input type="text" name="whom_to_meet"></div>
+    <div class="field"><label>Host Department</label>
+      <select name="host_department_id"><option value="">—</option>
+        {% for d in departments %}<option value="{{ d.id }}">{{ d.name }}</option>{% endfor %}
+      </select></div>
+    <div class="field"><label>Purpose</label><input type="text" name="purpose"></div>
+    <div class="field"><label>ID Proof Type</label>
+      <select name="id_proof_type"><option value="">—</option>
+        <option>Aadhaar</option><option>PAN</option><option>Driving Licence</option>
+        <option>Passport</option><option>Voter ID</option></select></div>
+    <div class="field"><label>ID Proof Number</label><input type="text" name="id_proof_number"></div>
+    <div class="field"><label>Vehicle Number</label><input type="text" name="vehicle_number"></div>
+    <div class="field"><label>Badge No</label><input type="text" name="badge_no"></div>
+  </div>
+  <div class="field"><label>Items Carried</label><textarea name="items_carried" rows="2"></textarea></div>
+  <div class="form-actions">
+    <button type="submit" class="btn primary">Save Visitor Entry</button>
+    <a href="/gate/visitor" class="btn">Cancel</a>
+  </div>
+</form>
+{% endblock %}

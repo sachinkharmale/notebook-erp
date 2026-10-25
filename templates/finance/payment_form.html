@@ -1,0 +1,54 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/finance/payment" class="back">← Payments</a><h1>New Payment</h1></div>
+</div>
+<form method="post" action="/finance/payment/new" class="entity-form">
+  <div class="field-row">
+    <div class="field"><label>Payment No</label><input type="text" name="payment_no" value="{{ no }}" required></div>
+    <div class="field"><label>Type</label>
+      <select name="payment_type" id="ptype" onchange="toggleParty()">
+        <option value="receipt" {% if ptype=='receipt' %}selected{% endif %}>Receipt (from Customer)</option>
+        <option value="payment" {% if ptype=='payment' %}selected{% endif %}>Payment (to Supplier)</option>
+      </select></div>
+    <div class="field"><label>Party <span class="req">*</span></label>
+      <select name="party_id" id="party" required onchange="loadInvoices()"></select></div>
+    <div class="field"><label>Date</label><input type="date" name="payment_date" value="{{ today }}" required></div>
+    <div class="field"><label>Amount (₹)</label><input type="number" step="0.01" name="amount" required></div>
+    <div class="field"><label>Mode</label>
+      <select name="payment_mode"><option value="bank">Bank</option><option value="cash">Cash</option><option value="upi">UPI</option><option value="cheque">Cheque</option><option value="neft">NEFT</option><option value="rtgs">RTGS</option></select></div>
+    <div class="field"><label>Reference No</label><input type="text" name="reference_no"></div>
+    <div class="field"><label>Against Invoice</label>
+      <select name="invoice_id" id="invoice"><option value="">— none —</option></select></div>
+  </div>
+  <div class="field"><label>Remarks</label><textarea name="remarks" rows="2"></textarea></div>
+  <div class="form-actions">
+    <button type="submit" class="btn primary">Record Payment</button>
+    <a href="/finance/payment" class="btn">Cancel</a>
+  </div>
+</form>
+<script>
+const customers = {{ customers|tojson }};
+const suppliers = {{ suppliers|tojson }};
+function toggleParty() {
+  const t = document.getElementById('ptype').value;
+  const sel = document.getElementById('party');
+  const list = t === 'receipt' ? customers : suppliers;
+  sel.innerHTML = '<option value="">— select —</option>' +
+    list.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  document.getElementById('invoice').innerHTML = '<option value="">— select party first —</option>';
+}
+function loadInvoices() {
+  const t = document.getElementById('ptype').value === 'receipt' ? 'customer' : 'supplier';
+  const pid = document.getElementById('party').value;
+  if (!pid) return;
+  fetch(`/api/finance/open-invoices?party_type=${t}&party_id=${pid}`)
+    .then(r => r.json()).then(rows => {
+      const sel = document.getElementById('invoice');
+      sel.innerHTML = '<option value="">— none —</option>' +
+        rows.map(r => `<option value="${r.id}">${r.no} — ₹${r.balance.toFixed(2)}</option>`).join('');
+    });
+}
+toggleParty();
+</script>
+{% endblock %}

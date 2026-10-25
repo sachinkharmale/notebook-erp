@@ -1,0 +1,21 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/gate/vehicle" class="back">← Vehicle Visits</a><h1>{{ row.visit_no }}</h1></div>
+  <span class="badge big">{{ row.load_type }}</span>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+<dl class="view-dl">
+  <dt>Date</dt><dd>{{ row.visit_date }}</dd>
+  <dt>Vehicle</dt><dd>{{ row.vehicle_number }}</dd>
+  <dt>Driver</dt><dd>{{ row.driver_name or '—' }} ({{ row.driver_mobile or '—' }})</dd>
+  <dt>Party</dt><dd>{{ row.party_name or '—' }}</dd>
+  <dt>In Time</dt><dd>{{ row.in_time or '—' }}</dd>
+  <dt>Out Time</dt><dd>{{ row.out_time or '—' }}</dd>
+  <dt>First Weight</dt><dd>{{ '{:,.2f}'.format(row.first_weight or 0) }} kg</dd>
+  <dt>Last Weight</dt><dd>{{ '{:,.2f}'.format(row.last_weight or 0) }} kg</dd>
+  <dt>Net Weight</dt><dd><strong>{{ '{:,.2f}'.format((row.first_weight or 0) - (row.last_weight or 0)) }} kg</strong></dd>
+  <dt>Challan In / Out</dt><dd>{{ row.inward_challan_no or '—' }} / {{ row.outward_challan_no or '—' }}</dd>
+  <dt>Remarks</dt><dd>{{ row.remarks or '—' }}</dd>
+</dl>
+{% endblock %}

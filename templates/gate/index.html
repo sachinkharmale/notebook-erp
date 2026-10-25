@@ -1,0 +1,14 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1>Gate / Security</h1>
+<div class="masters-grid">
+  <a href="/gate/vehicle" class="master-card">
+    <div class="master-title">Vehicle In/Out</div>
+    <div class="master-count">{{ counts.vehicles }} visit(s)</div>
+  </a>
+  <a href="/gate/visitor" class="master-card">
+    <div class="master-title">Visitor In/Out</div>
+    <div class="master-count">{{ counts.visitors }} visit(s)</div>
+  </a>
+</div>
+{% endblock %}

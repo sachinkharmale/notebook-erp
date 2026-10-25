@@ -1,0 +1,45 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/finance/sales-invoice" class="back">← Sales Invoices</a><h1>{{ si.invoice_no }}</h1></div>
+  <span class="badge big">{{ si.computed_status }}</span>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+<dl class="view-dl">
+  <dt>Customer</dt><dd>{{ si.customer_name }}</dd>
+  <dt>Invoice Date</dt><dd>{{ si.invoice_date }}</dd>
+  <dt>Due Date</dt><dd>{{ si.due_date or '—' }}</dd>
+  <dt>Subtotal</dt><dd>₹{{ '{:,.2f}'.format(si.subtotal) }}</dd>
+  <dt>Tax ({{ si.tax_rate }}%)</dt><dd>₹{{ '{:,.2f}'.format(si.tax_amount) }}</dd>
+  <dt>Total</dt><dd><strong>₹{{ '{:,.2f}'.format(si.total_amount) }}</strong></dd>
+  <dt>Paid</dt><dd>₹{{ '{:,.2f}'.format(si.paid_amount or 0) }}</dd>
+  <dt>Balance</dt><dd><strong style="color:#dc3545">₹{{ '{:,.2f}'.format(si.balance) }}</strong></dd>
+</dl>
+<h2>Lines</h2>
+<table>
+  <thead><tr><th>SKU / WOS</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead>
+  <tbody>
+    {% for l in lines %}
+    <tr>
+      <td>{% if l.sku_code %}<strong>{{ l.sku_code }}</strong> {{ l.sku_name }}{% else %}{{ l.description or '—' }}{% endif %}
+        {% if l.wos_no %}<br><span class="muted">WOS: {{ l.wos_no }}</span>{% endif %}</td>
+      <td>{{ '{:,.0f}'.format(l.qty) }}</td>
+      <td>₹{{ '{:,.2f}'.format(l.rate) }}</td>
+      <td>₹{{ '{:,.2f}'.format(l.amount) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if allocs %}
+<h2>Payments Received</h2>
+<table>
+  <thead><tr><th>Payment No</th><th>Date</th><th>Mode</th><th class="right">Amount</th></tr></thead>
+  <tbody>
+    {% for a in allocs %}<tr><td>{{ a.payment_no }}</td><td>{{ a.payment_date }}</td><td>{{ a.payment_mode }}</td><td class="right">₹{{ '{:,.2f}'.format(a.allocated_amount) }}</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% if si.balance > 0.01 %}
+<p style="margin-top:16px"><a href="/finance/payment/new?ptype=receipt&party_type=customer" class="btn primary">Record Payment →</a></p>
+{% endif %}
+{% endblock %}

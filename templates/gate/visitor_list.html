@@ -1,0 +1,26 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/gate" class="back">← Gate</a><h1>Visitor Visits</h1></div>
+  <a href="/gate/visitor/new" class="btn primary">+ New Visitor Entry</a>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+<table>
+  <thead><tr><th>Visit</th><th>In</th><th>Out</th><th>Visitor</th><th>Company</th><th>To Meet</th><th>Purpose</th><th></th></tr></thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td><strong>{{ r.visit_no }}</strong></td>
+      <td>{{ r.in_time }}</td>
+      <td>{{ r.out_time or '—' }}</td>
+      <td>{{ r.visitor_name }}</td>
+      <td>{{ r.company_name or '—' }}</td>
+      <td>{{ r.whom_to_meet or '—' }}</td>
+      <td>{{ r.purpose or '—' }}</td>
+      <td><a href="/gate/visitor/{{ r.id }}">View →</a></td>
+    </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="8" class="empty">No visitor entries. <a href="/gate/visitor/new">Add one →</a></td></tr>{% endif %}
+  </tbody>
+</table>
+{% endblock %}

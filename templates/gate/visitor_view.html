@@ -1,0 +1,19 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/gate/visitor" class="back">← Visitor Visits</a><h1>{{ row.visit_no }}</h1></div>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+<dl class="view-dl">
+  <dt>Visitor</dt><dd><strong>{{ row.visitor_name }}</strong></dd>
+  <dt>Company</dt><dd>{{ row.company_name or '—' }}</dd>
+  <dt>Coming From</dt><dd>{{ row.coming_from or '—' }}</dd>
+  <dt>Mobile</dt><dd>{{ row.mobile or '—' }}</dd>
+  <dt>To Meet</dt><dd>{{ row.whom_to_meet or '—' }}</dd>
+  <dt>Purpose</dt><dd>{{ row.purpose or '—' }}</dd>
+  <dt>In Time</dt><dd>{{ row.in_time }}</dd>
+  <dt>Out Time</dt><dd>{{ row.out_time or '—' }}</dd>
+  <dt>ID Proof</dt><dd>{{ row.id_proof_type or '—' }}: {{ row.id_proof_number or '—' }}</dd>
+  <dt>Badge</dt><dd>{{ row.badge_no or '—' }}</dd>
+</dl>
+{% endblock %}

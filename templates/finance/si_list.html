@@ -1,0 +1,26 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/finance" class="back">← Finance</a><h1>Sales Invoices</h1></div>
+  <a href="/finance/sales-invoice/new" class="btn primary">+ New Invoice</a>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+<table>
+  <thead><tr><th>Invoice</th><th>Customer</th><th>Date</th><th>Total</th><th>Paid</th><th>Balance</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td><strong>{{ r.invoice_no }}</strong></td>
+      <td>{{ r.customer_name }}</td>
+      <td>{{ r.invoice_date }}</td>
+      <td>₹{{ '{:,.2f}'.format(r.total_amount) }}</td>
+      <td>₹{{ '{:,.2f}'.format(r.paid_amount or 0) }}</td>
+      <td>₹{{ '{:,.2f}'.format(r.balance) }}</td>
+      <td><span class="badge">{{ r.computed_status }}</span></td>
+      <td><a href="/finance/sales-invoice/{{ r.id }}">View →</a></td>
+    </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="8" class="empty">No invoices yet.</td></tr>{% endif %}
+  </tbody>
+</table>
+{% endblock %}

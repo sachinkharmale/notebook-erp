@@ -1,7 +1,8 @@
 ﻿from contextlib import asynccontextmanager
 from datetime import date
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 
 from .config import APP_NAME, BASE_DIR, DB_PATH
 from .db import get_conn, list_tables, list_views
@@ -11,6 +12,8 @@ from .modules.masters.router import router as masters_router
 from .modules.sales.router import router as sales_router
 from .modules.production.router import router as production_router
 from .modules.reports.router import router as reports_router
+from .modules.gate.router import router as gate_router
+from .modules.finance.router import router as finance_router
 
 SYNC_MAP = {
     "customer_po": "customer_po", "wos": "wos", "bom_template": "bom_template",
@@ -62,3 +65,21 @@ app.include_router(masters_router)
 app.include_router(sales_router)
 app.include_router(production_router)
 app.include_router(reports_router)
+app.include_router(gate_router)
+app.include_router(finance_router)
+
+
+@app.post("/api/sync/sheets")
+def sync_sheets(request: Request):
+    """Trigger Google Sheets push. Requires session cookie."""
+    if not request.cookies.get("session_user"):
+        raise HTTPException(status_code=401, detail="Not logged in")
+    try:
+        from .integrations.google_sheets import push_rows
+        from .db import query
+        # Example: push customers
+        result = push_rows("customer", [dict(r) for r in query("SELECT * FROM customer")],
+                           headers=["id", "code", "name", "gstin", "mobile", "email", "active"])
+        return JSONResponse(result)
+    except Exception as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=500)

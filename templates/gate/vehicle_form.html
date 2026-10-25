@@ -1,0 +1,36 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/gate/vehicle" class="back">← Vehicle Visits</a><h1>New Vehicle Entry</h1></div>
+</div>
+<form method="post" action="/gate/vehicle/new" class="entity-form">
+  <div class="field-row">
+    <div class="field"><label>Visit No</label><input type="text" name="visit_no" value="{{ no }}" required></div>
+    <div class="field"><label>Date</label><input type="date" name="visit_date" value="{{ today }}" required></div>
+    <div class="field"><label>Load Type</label>
+      <select name="load_type" required>
+        <option value="inward">Inward</option><option value="outward">Outward</option>
+        <option value="both">Both</option><option value="internal">Internal</option>
+      </select></div>
+    <div class="field"><label>Vehicle Number</label><input type="text" name="vehicle_number" placeholder="MH-12-AB-1234" required></div>
+    <div class="field"><label>Driver Name</label><input type="text" name="driver_name"></div>
+    <div class="field"><label>Driver Mobile</label><input type="text" name="driver_mobile"></div>
+    <div class="field"><label>Driver Licence</label><input type="text" name="driver_licence"></div>
+    <div class="field"><label>Party (Supplier/Customer)</label><input type="text" name="party_name"></div>
+    <div class="field"><label>Inward Challan</label><input type="text" name="inward_challan_no"></div>
+    <div class="field"><label>Outward Challan</label><input type="text" name="outward_challan_no"></div>
+    <div class="field"><label>In Time</label><input type="datetime-local" name="in_time" value="{{ now }}"></div>
+    <div class="field"><label>Out Time</label><input type="datetime-local" name="out_time"></div>
+    <div class="field"><label>First Weight (kg)</label><input type="number" step="0.01" name="first_weight"></div>
+    <div class="field"><label>Last Weight (kg)</label><input type="number" step="0.01" name="last_weight"></div>
+    <div class="field"><label>Weighbridge Station</label><input type="text" name="weighbridge_station" value="WB-1"></div>
+    <div class="field"><label>Container No</label><input type="text" name="container_no"></div>
+    <div class="field"><label>Seal No</label><input type="text" name="container_seal_no"></div>
+  </div>
+  <div class="field"><label>Remarks</label><textarea name="remarks" rows="2"></textarea></div>
+  <div class="form-actions">
+    <button type="submit" class="btn primary">Save Vehicle Entry</button>
+    <a href="/gate/vehicle" class="btn">Cancel</a>
+  </div>
+</form>
+{% endblock %}

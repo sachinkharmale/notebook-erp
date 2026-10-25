@@ -1,0 +1,28 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/gate" class="back">← Gate</a><h1>Vehicle Visits</h1></div>
+  <a href="/gate/vehicle/new" class="btn primary">+ New Vehicle Entry</a>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+<table>
+  <thead><tr><th>Visit</th><th>Date</th><th>Vehicle</th><th>Driver</th><th>Party</th><th>Load</th><th>Weights (kg)</th><th>Net</th><th></th></tr></thead>
+  <tbody>
+    {% for r in rows %}
+    {% set net = (r.first_weight or 0) - (r.last_weight or 0) %}
+    <tr>
+      <td><strong>{{ r.visit_no }}</strong></td>
+      <td>{{ r.visit_date }}</td>
+      <td>{{ r.vehicle_number }}</td>
+      <td>{{ r.driver_name or '—' }}</td>
+      <td>{{ r.party_name or '—' }}</td>
+      <td><span class="badge">{{ r.load_type }}</span></td>
+      <td>{{ '{:,.2f}'.format(r.first_weight or 0) }} / {{ '{:,.2f}'.format(r.last_weight or 0) }}</td>
+      <td><strong>{{ '{:,.2f}'.format(net) }}</strong></td>
+      <td><a href="/gate/vehicle/{{ r.id }}">View →</a></td>
+    </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="9" class="empty">No vehicle visits. <a href="/gate/vehicle/new">Add one →</a></td></tr>{% endif %}
+  </tbody>
+</table>
+{% endblock %}

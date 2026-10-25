@@ -1,0 +1,25 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/finance" class="back">← Finance</a><h1>Payments</h1></div>
+  <a href="/finance/payment/new" class="btn primary">+ New Payment</a>
+</div>
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+<table>
+  <thead><tr><th>Payment No</th><th>Type</th><th>Party</th><th>Date</th><th class="right">Amount</th><th>Mode</th><th>Ref</th></tr></thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td><strong>{{ r.payment_no }}</strong></td>
+      <td>{{ r.payment_type }}</td>
+      <td>{{ r.party_name }}</td>
+      <td>{{ r.payment_date }}</td>
+      <td class="right">₹{{ '{:,.2f}'.format(r.amount) }}</td>
+      <td>{{ r.payment_mode or '—' }}</td>
+      <td>{{ r.reference_no or '—' }}</td>
+    </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="7" class="empty">No payments yet.</td></tr>{% endif %}
+  </tbody>
+</table>
+{% endblock %}

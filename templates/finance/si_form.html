@@ -1,0 +1,31 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><a href="/finance/sales-invoice" class="back">← Sales Invoices</a><h1>New Sales Invoice</h1></div>
+</div>
+<form method="post" action="/finance/sales-invoice/new" class="entity-form">
+  <div class="field-row">
+    <div class="field"><label>Invoice No</label><input type="text" name="invoice_no" value="{{ no }}" required></div>
+    <div class="field"><label>Customer <span class="req">*</span></label>
+      <select name="customer_id" required>
+        <option value="">—</option>
+        {% for c in customers %}<option value="{{ c.id }}" {% if prefill and prefill.customer_id==c.id %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+      </select></div>
+    <div class="field"><label>From Dispatch</label>
+      <select name="dispatch_id">
+        <option value="">— none —</option>
+        {% for d in dispatches %}<option value="{{ d.id }}" {% if prefill and prefill.id==d.id %}selected{% endif %}>{{ d.dispatch_no }} ({{ d.qty_dispatched }} pcs)</option>{% endfor %}
+      </select></div>
+    <div class="field"><label>Invoice Date</label><input type="date" name="invoice_date" value="{{ today }}" required></div>
+    <div class="field"><label>Due Date</label><input type="date" name="due_date"></div>
+    <div class="field"><label>Description</label><input type="text" name="description" value="Notebook supply"></div>
+    <div class="field"><label>Qty</label><input type="number" step="any" name="qty" value="{{ prefill.qty_dispatched if prefill else '' }}" required></div>
+    <div class="field"><label>Rate (₹)</label><input type="number" step="any" name="rate" value="{{ prefill.rate if prefill else '' }}" required></div>
+    <div class="field"><label>Tax Rate (%)</label><input type="number" step="any" name="tax_rate" value="18"></div>
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn primary">Create Invoice</button>
+    <a href="/finance/sales-invoice" class="btn">Cancel</a>
+  </div>
+</form>
+{% endblock %}

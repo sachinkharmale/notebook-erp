@@ -1,0 +1,13 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1>Finance</h1>
+<div class="grid" style="margin-bottom:24px">
+  <div class="card"><div class="num" style="color:#dc3545">₹{{ '{:,.0f}'.format(ar) }}</div><div class="label">Total Receivable</div></div>
+  <div class="card"><div class="num" style="color:#f59e0b">₹{{ '{:,.0f}'.format(ap) }}</div><div class="label">Total Payable</div></div>
+</div>
+<div class="masters-grid">
+  <a href="/finance/sales-invoice" class="master-card"><div class="master-title">Sales Invoices</div><div class="master-count">{{ counts.si }} invoice(s)</div></a>
+  <a href="/finance/purchase-invoice" class="master-card"><div class="master-title">Purchase Invoices</div><div class="master-count">{{ counts.pi }} invoice(s)</div></a>
+  <a href="/finance/payment" class="master-card"><div class="master-title">Payments</div><div class="master-count">{{ counts.pay }} payment(s)</div></a>
+</div>
+{% endblock %}
