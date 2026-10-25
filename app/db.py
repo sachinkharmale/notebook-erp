@@ -1,6 +1,4 @@
-﻿"""SQLite connection helpers — no ORM, no server, just files."""
-import sqlite3
-from pathlib import Path
+﻿import sqlite3
 from .config import DB_PATH
 
 
@@ -40,3 +38,8 @@ def list_tables() -> list[str]:
 def list_views() -> list[str]:
     rows = query("SELECT name FROM sqlite_master WHERE type='view' ORDER BY name")
     return [r["name"] for r in rows]
+
+
+def table_count(table: str) -> int:
+    row = query_one(f"SELECT COUNT(*) AS c FROM {table}")
+    return row["c"] if row else 0
