@@ -1,0 +1,14 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1>Masters</h1>
+<p class="muted">Every record here is the single source of truth for that entity.</p>
+
+<div class="masters-grid">
+  {% for key, m in masters.items() %}
+  <a href="/masters/{{ key }}" class="master-card">
+    <div class="master-title">{{ m.title }}</div>
+    <div class="master-count">{{ counts[key] }} records</div>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}

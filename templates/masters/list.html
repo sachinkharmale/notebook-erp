@@ -1,0 +1,58 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <a href="/masters" class="back">← All masters</a>
+    <h1>{{ cfg.title }}</h1>
+  </div>
+  <a href="/masters/{{ entity }}/new" class="btn primary">+ New {{ cfg.singular }}</a>
+</div>
+
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+{% if error %}<div class="flash error">{{ error }}</div>{% endif %}
+
+<form method="get" class="search-form">
+  <input type="search" name="q" value="{{ q }}" placeholder="Search {{ cfg.title|lower }}...">
+  <button type="submit">Search</button>
+  {% if q %}<a href="/masters/{{ entity }}">Clear</a>{% endif %}
+</form>
+
+{% set display_cols = cfg.fields[:5] %}
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      {% for col in display_cols %}<th>{{ col.label }}</th>{% endfor %}
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r.id }}</td>
+      {% for col in display_cols %}
+      <td>
+        {% if col.type == 'checkbox' %}
+          {{ '✓' if r[col.key] else '—' }}
+        {% elif r[col.key] is not none and r[col.key] != '' %}
+          {{ r[col.key] }}
+        {% else %}
+          <span class="muted">—</span>
+        {% endif %}
+      </td>
+      {% endfor %}
+      <td class="actions">
+        <a href="/masters/{{ entity }}/{{ r.id }}">View</a>
+        <a href="/masters/{{ entity }}/{{ r.id }}/edit">Edit</a>
+        <form method="post" action="/masters/{{ entity }}/{{ r.id }}/delete" style="display:inline" onsubmit="return confirm('Deactivate this record?')">
+          <button type="submit" class="link danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+    {% if not rows %}
+    <tr><td colspan="{{ display_cols|length + 2 }}" class="empty">No records yet. <a href="/masters/{{ entity }}/new">Create one →</a></td></tr>
+    {% endif %}
+  </tbody>
+</table>
+{% endblock %}

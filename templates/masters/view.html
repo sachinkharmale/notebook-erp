@@ -1,0 +1,24 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <a href="/masters/{{ entity }}" class="back">← {{ cfg.title }}</a>
+    <h1>{{ cfg.singular }} #{{ row.id }}</h1>
+  </div>
+  <a href="/masters/{{ entity }}/{{ row.id }}/edit" class="btn primary">Edit</a>
+</div>
+
+{% if msg %}<div class="flash success">{{ msg }}</div>{% endif %}
+
+<dl class="view-dl">
+  {% for f in cfg.fields %}
+  <dt>{{ f.label }}</dt>
+  <dd>
+    {% if f.type == 'password' %}●●●●●●●●
+    {% elif f.type == 'checkbox' %}{{ 'Yes' if row.get(f.key) else 'No' }}
+    {% elif row.get(f.key) is not none and row.get(f.key) != '' %}{{ row.get(f.key) }}
+    {% else %}<span class="muted">—</span>{% endif %}
+  </dd>
+  {% endfor %}
+</dl>
+{% endblock %}

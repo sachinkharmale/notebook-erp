@@ -1,0 +1,54 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <a href="/masters/{{ entity }}" class="back">← {{ cfg.title }}</a>
+    <h1>{{ 'New' if mode == 'new' else 'Edit' }} {{ cfg.singular }}</h1>
+  </div>
+</div>
+
+{% if error %}<div class="flash error">{{ error }}</div>{% endif %}
+
+<form method="post" action="/masters/{{ entity }}/{{ 'new' if mode == 'new' else row.id ~ '/edit' }}" class="entity-form">
+  {% for f in cfg.fields %}
+  <div class="field">
+    <label>{{ f.label }}{% if f.required %} <span class="req">*</span>{% endif %}</label>
+    {% if f.type == 'textarea' %}
+      <textarea name="{{ f.key }}" rows="3" {% if f.required %}required{% endif %}>{{ row.get(f.key) or '' }}</textarea>
+    {% elif f.type == 'checkbox' %}
+      <input type="checkbox" name="{{ f.key }}" {% if row.get(f.key) %}checked{% endif %}>
+    {% elif f.type == 'select' %}
+      <select name="{{ f.key }}" {% if f.required %}required{% endif %}>
+        <option value="">—</option>
+        {% for opt in f.options %}
+        <option value="{{ opt }}" {% if row.get(f.key) == opt %}selected{% endif %}>{{ opt }}</option>
+        {% endfor %}
+      </select>
+    {% elif f.type == 'ref' %}
+      <select name="{{ f.key }}" {% if f.required %}required{% endif %}>
+        <option value="">—</option>
+        {% for opt in ref_options.get(f.key, []) %}
+        <option value="{{ opt.id }}" {% if row.get(f.key) == opt.id %}selected{% endif %}>{{ opt.label }}</option>
+        {% endfor %}
+      </select>
+    {% elif f.type == 'password' %}
+      <input type="password" name="{{ f.key }}" {% if f.required and mode == 'new' %}required{% endif %} placeholder="{{ 'Leave blank to keep current' if mode == 'edit' else '' }}">
+    {% elif f.type == 'number' %}
+      <input type="number" step="any" name="{{ f.key }}" value="{{ row.get(f.key) if row.get(f.key) is not none else '' }}" {% if f.required %}required{% endif %}>
+    {% elif f.type == 'integer' %}
+      <input type="number" step="1" name="{{ f.key }}" value="{{ row.get(f.key) if row.get(f.key) is not none else '' }}" {% if f.required %}required{% endif %}>
+    {% elif f.type == 'date' %}
+      <input type="date" name="{{ f.key }}" value="{{ row.get(f.key) or '' }}" {% if f.required %}required{% endif %}>
+    {% elif f.type == 'email' %}
+      <input type="email" name="{{ f.key }}" value="{{ row.get(f.key) or '' }}" {% if f.required %}required{% endif %}>
+    {% else %}
+      <input type="text" name="{{ f.key }}" value="{{ row.get(f.key) or '' }}" {% if f.required %}required{% endif %}>
+    {% endif %}
+  </div>
+  {% endfor %}
+  <div class="form-actions">
+    <button type="submit" class="btn primary">Save</button>
+    <a href="/masters/{{ entity }}" class="btn">Cancel</a>
+  </div>
+</form>
+{% endblock %}

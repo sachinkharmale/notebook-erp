@@ -11,15 +11,20 @@
     <div class="brand">{{ app_name or "Mini ERP" }}</div>
     <nav>
       <a href="/">Dashboard</a>
-      <a href="/docs">API Docs</a>
+      <a href="/masters">Masters</a>
+      <a href="/docs">API</a>
       <a href="/health">Health</a>
+      {% if user %}
+      <span class="user-badge">{{ user }}</span>
+      <a href="/logout" class="logout">Logout</a>
+      {% else %}
+      <a href="/login" class="login">Login</a>
+      {% endif %}
     </nav>
   </header>
   <main>
     {% block content %}{% endblock %}
   </main>
-  <footer>
-    <span>{{ app_env or "dev" }}</span>
-  </footer>
+  <footer><span>{{ app_env or "dev" }}</span></footer>
 </body>
 </html>
